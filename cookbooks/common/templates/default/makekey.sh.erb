@@ -1,0 +1,22 @@
+#!/bin/bash
+
+openssl genrsa -aes256 \
+	-passout pass:changeit \
+	-out server.key 1024 
+
+openssl req -x509 -sha256 -new -key server.key \
+	-out server.csr -passin pass:changeit \
+	-subj "/C=US/ST=Alanta/L=/O=/CN=*.altiforce.com" -nodes
+
+openssl x509 -sha256 -days 3652 -in server.csr \
+	-signkey server.key -out selfsigned.crt \
+	-passin pass:changeit
+
+openssl pkcs12 -export -name altiforce \
+	-in selfsigned.crt -inkey server.key -out keystore.p12 \
+	-passin pass:changeit -passout pass:changeit
+
+# This one goes to java recipe
+#keytool -importkeystore -destkeystore /user/lib/jvm/java-7-sun/jre/lib/securtiy/cacerts \
+#	-srckeystore keystore.p12 -srcstoretype pkcs12 \
+#	-alias altiforce -srcstorepass changeit -deststorepass changeit

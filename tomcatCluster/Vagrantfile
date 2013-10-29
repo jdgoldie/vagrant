@@ -1,0 +1,91 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+
+host_definitions = {
+  :cas => {
+    :webapps_dir => "webapps_cas",
+    :ip => "192.168.10.10",
+    :recipes => "common,java,tomcat,webapps,hosts,cas",
+    :startup => "tomcat"
+  },
+   :www1 => {
+     :webapps_dir => "webapps_www1",
+     :ip => "192.168.10.11",
+     :recipes => "common,java,tomcat,webapps,hosts",
+     :startup => "tomcat"
+  },
+   :www2 => {
+     :webapps_dir => "webapps_www2",
+     :ip => "192.168.10.12",
+     :recipes => "common,java,tomcat,webapps,hosts",
+     :startup => "tomcat"
+  },   
+}
+
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |global_config|
+
+  host_definitions.each_pair do |name, options|
+
+    global_config.vm.define name do |config|
+
+      config.vm.box = "precise32"
+      config.vm.box_url = "http://files.vagrantup.com/precise32.box"
+
+      # Create a forwarded port mapping which allows access to a specific port
+      # within the machine from a port on the host machine. In the example below,
+      # accessing "localhost:8080" will access port 80 on the guest machine.
+      #config.vm.network :forwarded_port, guest: 8080, host: 8080
+      #config.vm.network :forwarded_port, guest: 8443, host: 8443
+
+      #host only network with defined ip 
+      config.vm.network :private_network, ip: options[:ip]
+      config.vm.hostname = "#{name}.altiforce.com"
+        
+      # Enable provisioning with chef solo, specifying a cookbooks path, roles
+      # path, and data_bags path (all relative to this Vagrantfile), and adding
+      # some recipes and/or roles.
+      #
+      config.vm.provision :chef_solo do |chef|
+
+        chef.cookbooks_path = "../cookbooks"
+
+        options[:recipes].split(",").each do | recipe_name |
+          chef.add_recipe recipe_name
+        end
+
+        chef.json = {
+            :server => name,
+            :webapps => options[:webapps_dir],
+            :all_hosts => host_definitions
+        }
+
+      end
+
+      #
+      # Startup section.  Want config done first, then fire off the startup recipes
+      #
+      config.vm.provision :chef_solo do |chef|
+
+        chef.cookbooks_path = "../cookbooks"
+
+        options[:startup].split(",").each do | recipe_name |
+          chef.add_recipe "start_#{recipe_name}"
+        end
+
+        chef.json = {
+            :server => name,
+            :webapps => options[:webapps_dir]
+        }        
+
+      end
+
+    end
+
+  end
+
+end

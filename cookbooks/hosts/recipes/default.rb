@@ -1,0 +1,26 @@
+
+hosts_list = node["all_hosts"].map { |host,opts|
+	"#{opts[:ip]}	#{host}.#{node.common.domain}"
+}
+
+
+#
+# Generate host data so clustered machines can find eachother
+#
+template "/vagrant/hosts" do
+	source "hosts.erb"
+	owner "vagrant"
+	group "vagrant"
+	mode "0644"
+	variables({
+		:host_entries => hosts_list
+		})
+end
+
+#
+# Tack on all but current host to file
+#
+execute "modify /etc/hosts" do
+	command "chmod u+rw /etc/hosts; cat /vagrant/hosts | grep -v #{node.server} >> /etc/hosts"
+	action :run
+end
