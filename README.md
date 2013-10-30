@@ -26,7 +26,7 @@ A collection of Vagrantfiles and Chef cookbooks to quickly spin up various confi
 
 `tomcatCluster/Vagrantfile` creates one VM running Tomcat with CAS installed and two Tomcat servers with the basic `manager` and `host-manager` installed.
 
-Read more [here][https://github.com/jdgoldie/vagrant/tree/master/tomcatCluster].
+Read more [here](https://github.com/jdgoldie/vagrant/tree/master/tomcatCluster).
 
 #### TODO
 
