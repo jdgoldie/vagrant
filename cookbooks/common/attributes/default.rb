@@ -10,7 +10,7 @@ default["common"]["chef_cache"] = "/vagrant/chef"
 default["common"]["home_dir"] = "/home/vagrant"	
 
 # The domain name; for SSL cert, /etc/hosts
-default["common"]["domain"] = "altiforce.com"
+default["common"]["domain"] = "local.net"
 
 # The SSL key name
-default["common"]["key_alias"] = "altiforce"
+default["common"]["key_alias"] = "localnet"

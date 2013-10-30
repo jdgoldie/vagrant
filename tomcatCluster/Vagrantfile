@@ -18,12 +18,12 @@ host_definitions = {
      :recipes => "common,java,tomcat,webapps,hosts",
      :startup => "tomcat"
   },
-   :www2 => {
-     :webapps_dir => "webapps_www2",
-     :ip => "192.168.10.12",
-     :recipes => "common,java,tomcat,webapps,hosts",
-     :startup => "tomcat"
-  },   
+    :www2 => {
+      :webapps_dir => "webapps_www2",
+      :ip => "192.168.10.12",
+      :recipes => "common,java,tomcat,webapps,hosts",
+      :startup => "tomcat"
+  }   
 }
 
 
@@ -44,8 +44,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |global_config|
 
       #host only network with defined ip 
       config.vm.network :private_network, ip: options[:ip]
-      config.vm.hostname = "#{name}.altiforce.com"
         
+      config.vm.provider "virtualbox" do |vm|
+        vm.customize ["modifyvm", :id, "--memory", "496"]
+      end
+
+
       # Enable provisioning with chef solo, specifying a cookbooks path, roles
       # path, and data_bags path (all relative to this Vagrantfile), and adding
       # some recipes and/or roles.

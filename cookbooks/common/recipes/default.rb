@@ -21,7 +21,7 @@ template "#{node.common.chef_cache}/makekey.sh" do
 	group "root"
 	mode "755"
 	variables({
-     	:domain => "#{node.common.domain}",
+     	:key_domain => "#{node.common.domain}",
      	:key_alias => "#{node.common.key_alias}"
     })
 end

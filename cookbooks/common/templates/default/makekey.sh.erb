@@ -6,13 +6,13 @@ openssl genrsa -aes256 \
 
 openssl req -x509 -sha256 -new -key server.key \
 	-out server.csr -passin pass:changeit \
-	-subj "/C=US/ST=Alanta/L=/O=/CN=*.altiforce.com" -nodes
+	-subj "/C=US/ST=Alanta/L=/O=/CN=*.<%= @key_domain %>" -nodes
 
 openssl x509 -sha256 -days 3652 -in server.csr \
 	-signkey server.key -out selfsigned.crt \
 	-passin pass:changeit
 
-openssl pkcs12 -export -name altiforce \
+openssl pkcs12 -export -name <%= @key_alias %> \
 	-in selfsigned.crt -inkey server.key -out keystore.p12 \
 	-passin pass:changeit -passout pass:changeit
 
