@@ -1,6 +1,6 @@
 ### Tomcat Cluster
 
-**The following VMs are created**
+**Servers**
 
 |       Server Name      |    Server Role   |       IP      |  Webapps Directory  |
 |:----------------------:|:----------------:|:-------------:|:-------------------:|
@@ -9,6 +9,14 @@
 |   www2.altiforce.com   |   tomcat server  | 192.168.10.12 |     webapps_www2    |
 
 *Note: the domain is not currently configurable*
+
+Simply `vagrant up` from the `tomcatCluster` directory to start the VMs.  It may take a while as the JDK, Tomcat, and CAS files are downloaded the first time.  (Subsequent invocations do not need to download the files if a copy is still available on the local disk in the `tomcatCluster/chef` directory.
+	
+Once the machines are started.  Deploy webapps to the appropriate directories: `tomcatCluster/webapps_www1` or `tomcatCluster/webapps_www2`.  Add the entries in `tomcatCluster/hosts` to `/etc/hosts` (or appropriate location) on your host machine OS so you can connect to the VMs by name.
+
+Use `vagrant ssh [cas|www1|www2]` to gain shell access to the VMs.  You can `sudo` without a password.
+
+When finished, `vagrant destroy` removes the VMs.  Downloaded files, generated SSL keys, and the `webapps_*` directories are left behind.  Unless there are significant changes to the recipes, they can be left as is.
 
 
 #### Vagrantfile Configuration
