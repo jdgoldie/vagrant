@@ -1,79 +1,29 @@
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
+require "../util/cluster"
 
-# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
-VAGRANTFILE_API_VERSION = "2"
+cluster = Cluster.build :tomcat_cas do
 
+  domain_name "local.net"
 
-host_definitions = {
-   :cas => {
-     :webapps_dir => "webapps_cas",
-     :ip => "192.168.10.10",
-     :role => "cas"
-  },
-   :www1 => {
-     :webapps_dir => "webapps_www1",
-     :ip => "192.168.10.11",
-     :role => "tomcat"
-     #:recipes => "common,java,tomcat,webapps,hosts"
+  #CAS Server
+  node (:cas) {
+    role :cas
+    webapps "webapps_cas"
+    memory 496
+    ip "192.168.10.10"    
   }
-  # ,
-  #   :www2 => {
-  #     :webapps_dir => "webapps_www2",
-  #     :ip => "192.168.10.12",
-  #     :recipes => "common,java,tomcat,webapps,hosts",
-  #     :startup => "tomcat"
-  # }   
-}
-
-
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |global_config|
-
-  host_definitions.each_pair do |name, options|
-
-    global_config.vm.define name do |config|
-
-      config.vm.box = "precise32"
-      config.vm.box_url = "http://files.vagrantup.com/precise32.box"
-
-      # Create a forwarded port mapping which allows access to a specific port
-      # within the machine from a port on the host machine. In the example below,
-      # accessing "localhost:8080" will access port 80 on the guest machine.
-      #config.vm.network :forwarded_port, guest: 8080, host: 8080
-      #config.vm.network :forwarded_port, guest: 8443, host: 8443
-
-      #host only network with defined ip 
-      config.vm.network :private_network, ip: options[:ip]
-        
-      config.vm.provider "virtualbox" do |vm|
-        vm.customize ["modifyvm", :id, "--memory", "496"]
-      end
-
-
-      # Enable provisioning with chef solo, specifying a cookbooks path, roles
-      # path, and data_bags path (all relative to this Vagrantfile), and adding
-      # some recipes and/or roles.
-      #
-      config.vm.provision :chef_solo do |chef|
-
-        chef.roles_path = "../roles"
-        chef.cookbooks_path = "../cookbooks"
-
-        # options[:recipes].split(",").each do | recipe_name |
-        #   chef.add_recipe recipe_name
-        # end
-        chef.add_role "role[#{options[:role]}]"
-
-        chef.json = {
-            :server => name,
-            :webapps => options[:webapps_dir],
-            :all_hosts => host_definitions
-        }
-
-      end
-
-    end
-
-  end
+  #Tomcat #1
+  node (:www1) {
+    role :tomcat
+    webapps "webapps_www1"
+    memory 496    
+    ip "192.168.10.11"    
+  }
+  #Tomcat #2
+  node (:www2) {
+    role :tomcat
+    webapps "webapps_www2"
+    memory 496    
+    ip "192.168.10.12"    
+  }
 
 end
