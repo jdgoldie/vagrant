@@ -1,17 +1,12 @@
 require "../util/cluster"
 
-cluster = Cluster.build :tomcat_cas do
+cluster = Cluster.build :mongo do
   
   domain_name "local.net"
 
-  node (:cas) {
-    role :cas
+  node (:db1) {
+    role :mongo
     memory 496
-    webapps "webapps_cas"
-  }
-  node (:www1) {
-    role :tomcat
-    webapps "webapps_www1"
   }
 
 end
