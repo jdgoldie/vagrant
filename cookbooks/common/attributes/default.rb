@@ -14,3 +14,6 @@ default["common"]["domain"] = "local.net"
 
 # The SSL key name
 default["common"]["key_alias"] = "localnet"
+
+# Defaults
+default["common"]["webapps"] = "webapps"

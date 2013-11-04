@@ -6,24 +6,24 @@ VAGRANTFILE_API_VERSION = "2"
 
 
 host_definitions = {
-  :cas => {
-    :webapps_dir => "webapps_cas",
-    :ip => "192.168.10.10",
-    :recipes => "common,java,tomcat,webapps,hosts,cas",
-    :startup => "tomcat"
+   :cas => {
+     :webapps_dir => "webapps_cas",
+     :ip => "192.168.10.10",
+     :role => "cas"
   },
    :www1 => {
      :webapps_dir => "webapps_www1",
      :ip => "192.168.10.11",
-     :recipes => "common,java,tomcat,webapps,hosts",
-     :startup => "tomcat"
-  },
-    :www2 => {
-      :webapps_dir => "webapps_www2",
-      :ip => "192.168.10.12",
-      :recipes => "common,java,tomcat,webapps,hosts",
-      :startup => "tomcat"
-  }   
+     :role => "tomcat"
+     #:recipes => "common,java,tomcat,webapps,hosts"
+  }
+  # ,
+  #   :www2 => {
+  #     :webapps_dir => "webapps_www2",
+  #     :ip => "192.168.10.12",
+  #     :recipes => "common,java,tomcat,webapps,hosts",
+  #     :startup => "tomcat"
+  # }   
 }
 
 
@@ -56,35 +56,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |global_config|
       #
       config.vm.provision :chef_solo do |chef|
 
+        chef.roles_path = "../roles"
         chef.cookbooks_path = "../cookbooks"
 
-        options[:recipes].split(",").each do | recipe_name |
-          chef.add_recipe recipe_name
-        end
+        # options[:recipes].split(",").each do | recipe_name |
+        #   chef.add_recipe recipe_name
+        # end
+        chef.add_role "role[#{options[:role]}]"
 
         chef.json = {
             :server => name,
             :webapps => options[:webapps_dir],
             :all_hosts => host_definitions
         }
-
-      end
-
-      #
-      # Startup section.  Want config done first, then fire off the startup recipes
-      #
-      config.vm.provision :chef_solo do |chef|
-
-        chef.cookbooks_path = "../cookbooks"
-
-        options[:startup].split(",").each do | recipe_name |
-          chef.add_recipe "start_#{recipe_name}"
-        end
-
-        chef.json = {
-            :server => name,
-            :webapps => options[:webapps_dir]
-        }        
 
       end
 

@@ -47,3 +47,39 @@ template "#{node.common.home_dir}/tomcat/conf/server.xml" do
      	:cacerts_path => "/usr/lib/jvm/java-7-sun/jre/lib/security/cacerts"
     })
 end
+
+#startup/shutdown files
+template "#{node.common.home_dir}/tomcat/bin/startup.sh" do
+	source "startup.sh.erb"
+	owner "vagrant"
+	group "vagrant"
+	mode "0755"
+	variables ({
+		:home_dir => "#{node.common.home_dir}"
+		})
+end
+
+template "#{node.common.home_dir}/tomcat/bin/shutdown.sh" do
+	source "shutdown.sh.erb"
+	owner "vagrant"
+	group "vagrant"
+	mode "0755"
+	variables ({
+		:home_dir => "#{node.common.home_dir}"
+		})
+end
+
+#service def for tomcat
+service "tomcat" do
+ 	supports :start => true, :stop =>true, :restart => true
+	start_command "#{node.common.home_dir}/tomcat/bin/startup.sh"
+	restart_command "#{node.common.home_dir}/tomcat/bin/shutdown.sh; #{node.common.home_dir}/tomcat/bin/startup.sh"
+	stop_command "#{node.common.home_dir}/tomcat/bin/shutdown.sh"
+	action [:nothing]
+end
+
+#Have it start when all is done
+execute "start_tomcat" do
+	command "sleep 0" 
+	notifies :start, 'service[tomcat]', :delayed
+end

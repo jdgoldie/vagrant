@@ -1,9 +1,3 @@
-
-hosts_list = node["all_hosts"].map { |host,opts|
-	"#{opts[:ip]}	#{host}.#{node.common.domain}"
-}
-
-
 #
 # Generate host data so clustered machines can find eachother
 #
@@ -13,7 +7,8 @@ template "/vagrant/hosts" do
 	group "vagrant"
 	mode "0644"
 	variables({
-		:host_entries => hosts_list
+		:host_entries => node["all_hosts"],
+		:domain => node["common"]["domain"]
 		})
 end
 
