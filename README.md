@@ -10,6 +10,8 @@ A collection of Vagrantfiles and Chef cookbooks to quickly spin up various confi
     * minimal server with JDK 1.7.0 installed
 * cas
     * a CAS 3.5.2 server
+* mongo
+    * Mongo DB server
 * base
     * a server with modified hosts file and little else
 
