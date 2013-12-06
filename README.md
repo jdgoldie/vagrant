@@ -14,6 +14,8 @@ A collection of Vagrantfiles and Chef cookbooks to quickly spin up various confi
     * Mongo DB server
 * base
     * a server with modified hosts file and little else
+* zookeeper
+    * a zookeeper server
 
 #### Cookbooks
 
@@ -36,6 +38,9 @@ A collection of Vagrantfiles and Chef cookbooks to quickly spin up various confi
     * supplies `hosts` file for use with host OS
 * mongo
     * installs the mongodb package from the 10gen repo
+* zookeeper
+    * installs zookeeper
+    * sets up hosts and zoo.cfg for a cluster
 
 #### Cluster Definition DSL
 
@@ -50,6 +55,5 @@ Read more [here](https://github.com/jdgoldie/vagrant/tree/master/tomcatCluster).
 #### TODO
 
 * database server options
-* zookeeper
 * ???
 
