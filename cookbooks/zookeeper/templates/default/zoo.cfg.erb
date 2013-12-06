@@ -1,0 +1,12 @@
+tickTime=2000
+dataDir=/home/vagrant/zookeeper
+clientPort=2181
+initLimit=5
+syncLimit=2
+<%
+	num=1 
+	@host_entries.each do |host| 
+		%>server.<%= num %>=<%= host %>:2888:3888
+		<% num=num+1
+	end 
+%>

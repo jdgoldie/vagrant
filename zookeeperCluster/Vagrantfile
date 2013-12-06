@@ -1,0 +1,23 @@
+require "../util/cluster"
+
+cluster = Cluster.build :zookeeper do
+  
+  domain_name "local.net"
+
+  node (:zoo1) {
+    role :zookeeper
+    myid 1
+  }
+
+  node (:zoo2) {
+    role :zookeeper
+    myid 2
+  }  
+
+  node (:zoo3) {
+    role :zookeeper
+    myid 3
+  }  
+
+end
+
