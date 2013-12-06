@@ -8,6 +8,7 @@ module Cluster
     #Set default IP addresses; create a block of 50 to pull from 
     avail_ip = Array.new(50){ |index| "192.168.10.#{index + 10}" }
     cluster.host_definitions = []
+    cluster.zookeeper_hosts = []
 
     cluster.nodes.each do |node|       
         avail_ip.delete(node.ip_addr) unless node.ip_addr.nil?
@@ -16,6 +17,7 @@ module Cluster
     cluster.nodes.each do |node|
       node.ip_addr = avail_ip.shift if node.ip_addr.nil?
       cluster.host_definitions << "#{node.ip_addr}  #{node.name}" 
+      cluster.zookeeper_hosts << "#{node.ip_addr}" if node.role_name == :zookeeper
     end
 
     Vagrant.configure(VAGRANTFILE_API_VERSION) do |global_config|
@@ -48,7 +50,8 @@ module Cluster
 
             chef.json = {
                 :server => node.name,
-                :all_hosts => cluster.host_definitions
+                :all_hosts => cluster.host_definitions,
+                :all_hosts_names => cluster.zookeeper_hosts
             }
 
             #Add additional properties to map...
@@ -69,7 +72,7 @@ end
 
 
 class ClusterDefinition
-  attr_accessor :name, :nodes, :domain, :host_definitions
+  attr_accessor :name, :nodes, :domain, :host_definitions, :zookeeper_hosts
 
   def initialize(name = '')
     @name = name.to_s
